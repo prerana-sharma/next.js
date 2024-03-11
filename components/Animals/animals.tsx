@@ -1,0 +1,217 @@
+"use client";
+import React, { useState } from "react";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  DropResult,
+} from "react-beautiful-dnd";
+import AnimalItem from "./animalItem";
+import { Box, Grid, Select, Input, Button } from "@mantine/core";
+import Image from "next/image";
+
+function Animals() {
+  const animals = [
+    {
+      id: 1,
+      image: "/img-animal1.jpg",
+      name: "Marge",
+      gender: "Female",
+      breed: "Bengal",
+      type: "cat",
+    },
+    {
+      id: 2,
+      image: "/img-animal2.jpg",
+      name: "Talan",
+      gender: "Male",
+      breed: "Bengal",
+      type: "cat",
+    },
+    {
+      id: 3,
+      image: "/img-animal3.jpg",
+      name: "Alena",
+      gender: "Female",
+      breed: "Bengal",
+      type: "cat",
+    },
+
+    {
+      id: 4,
+      image: "/img-animal4.jpg",
+      name: "Emerson",
+      gender: "Female",
+      breed: "Bengal",
+      type: "cat",
+    },
+    {
+      id: 5,
+      image: "/img-animal5.jpg",
+      name: "Greg",
+      gender: "Female",
+      breed: "Bengal",
+      type: "cat",
+    },
+    {
+      id: 6,
+      image: "/img-animal3.jpg",
+      name: "Lydia",
+      gender: "Female",
+      breed: "Bengal",
+      type: "cat",
+    },
+  ];
+
+  const [dragDropList, setDragDropList] = useState(animals);
+
+  const onDragComplete = (result: DropResult) => {
+    if (!result.destination) return;
+
+    const arr = [...dragDropList];
+
+    //Changing the position of Array element
+    let removedItem = arr.splice(result.source.index, 1)[0];
+    arr.splice(result.destination.index, 0, removedItem);
+
+    //Updating the list
+    setDragDropList(arr);
+  };
+
+  return (
+    <>
+      <Box>
+        <Box className="animal-filter-edit">
+          <Grid>
+            <Grid.Col span={12} sm={3}>
+              <Box component="span">Editing order</Box>
+            </Grid.Col>
+            <Grid.Col span={12} sm={9}>
+              <Box
+                sx={(theme) => ({
+                  display: "flex",
+                  flexWrap: "wrap",
+                  justifyContent: "flex-end",
+                })}
+              >
+                <Button size="md">Save changes</Button>
+              </Box>
+            </Grid.Col>
+          </Grid>
+        </Box>
+        <Box className="animal-filter">
+          <Grid>
+            <Grid.Col span={12} sm={3}>
+              <Box>
+                <Select
+                  placeholder="Filter"
+                  data={[
+                    { value: "male", label: "Male" },
+                    { value: "female", label: "Female" },
+                  ]}
+                  icon={
+                    <Image
+                      src="./icon-option.svg"
+                      width={24}
+                      height={24}
+                      alt="setting"
+                    />
+                  }
+                  // rightSection={
+                  //   <Image
+                  //     src="/arrow_drop_down.svg"
+                  //     width={24}
+                  //     height={24}
+                  //     alt="dropdown"
+                  //   />
+                  // }
+                  mb="24px"
+                  className=""
+                />
+              </Box>
+            </Grid.Col>
+
+            <Grid.Col span={12} sm={9}>
+              <Box
+                sx={(theme) => ({
+                  display: "flex",
+                  flexWrap: "wrap",
+                  justifyContent: "flex-end",
+                })}
+              >
+                <Button className="btn-outline" size="md">
+                  Edit order
+                </Button>
+                <Button
+                  component="a"
+                  href="/add-animal"
+                  leftIcon={
+                    <Image
+                      src="/icon-plus.svg"
+                      width={24}
+                      height={24}
+                      alt="add"
+                    />
+                  }
+                  size="md"
+                  mx="16px"
+                >
+                  Add New
+                </Button>
+                <Input
+                  icon={
+                    <Image
+                      src="./icon-search.svg"
+                      width={20}
+                      height={25}
+                      alt="search"
+                    />
+                  }
+                  placeholder="Search"
+                />
+              </Box>
+            </Grid.Col>
+          </Grid>
+        </Box>
+
+        <DragDropContext onDragEnd={onDragComplete}>
+          <Droppable droppableId="drag-drop-list" direction="horizontal">
+            {(provided, snapshot) => (
+              <Grid
+                className="drag-drop-list-container"
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {dragDropList.map((item, index) => (
+                  <Draggable
+                    key={item.id}
+                    draggableId={item.name}
+                    index={index}
+                  >
+                    {(provided) => (
+                      <Grid.Col
+                        key={index}
+                        span={12}
+                        sm={6}
+                        md={4}
+                        mb="38px"
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+                        <AnimalItem animal={item} />
+                      </Grid.Col>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </Grid>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </Box>
+    </>
+  );
+}
+
+export default Animals;
